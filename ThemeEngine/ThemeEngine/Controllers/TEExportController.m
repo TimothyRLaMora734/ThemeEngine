@@ -59,7 +59,7 @@
         [[packed representationUsingType:NSPNGFileType properties:@{}] writeToURL:url atomically:NO];
         
         [[NSWorkspace sharedWorkspace] openURLs:@[ url ]
-                        withAppBundleIdentifier:@"com.adobe.Photoshop"
+                        withAppBundleIdentifier:@"com.seriflabs.affinityphoto"
                                         options:0
                  additionalEventParamDescriptor:nil
                               launchIdentifiers:nil];
@@ -76,7 +76,7 @@
         }
         
         [[NSWorkspace sharedWorkspace] openURLs:urls
-                        withAppBundleIdentifier:@"com.adobe.illustrator"
+                        withAppBundleIdentifier:@"com.seriflabs.affinitydesigner"
                                         options:NSWorkspaceLaunchDefault
                  additionalEventParamDescriptor:nil
                               launchIdentifiers:nil];
@@ -99,14 +99,14 @@
     NSURL *tmpURL = [NSURL temporaryURLInSubdirectory:TKTemporaryDirectoryExports];
     TKRendition *rendition = renditions.firstObject;
     if ([rendition isKindOfClass:[TKBitmapRendition class]]) {
-        NSDataAsset *asset         = [[NSDataAsset alloc] initWithName:@"ApplescriptReceiveFromPhotoshop"];
+        NSDataAsset *asset         = [[NSDataAsset alloc] initWithName:@"ApplescriptReceiveFromAffinity"];
         NSData *data               = asset.data;
         NSString *format           = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];;
         NSRunningApplication *bndl = [NSRunningApplication
-                                      runningApplicationsWithBundleIdentifier:@"com.adobe.Photoshop"].firstObject;
+                                      runningApplicationsWithBundleIdentifier:@"com.seriflabs.affinityphotocom"].firstObject;
         
         if (!bndl) {
-            NSLog(@"photoshop is not running");
+            NSLog(@"Affinity Photo is not running");
             return;
         }
         
@@ -159,14 +159,14 @@
         }
         
     } else if ([rendition isKindOfClass:[TKPDFRendition class]]) {
-        NSDataAsset *asset         = [[NSDataAsset alloc] initWithName:@"ApplescriptReceiveFromIllustrator"];
+        NSDataAsset *asset         = [[NSDataAsset alloc] initWithName:@"ApplescriptReceiveFromDesigner"];
         NSData *data               = asset.data;
         NSString *format           = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-        NSRunningApplication *bndl = [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.adobe.illustrator"].firstObject;
+        NSRunningApplication *bndl = [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.seriflabs.affinitydesigner"].firstObject;
         
         if (!bndl) {
-            NSLog(@"illustrator is not running");
+            NSLog(@"Affinity Designer is not running");
             return;
         }
         
@@ -174,7 +174,7 @@
         NSString *scriptText       = [NSString stringWithFormat:format, name, name];
         NSAppleScript *script      = [[NSAppleScript alloc] initWithSource:scriptText];
         
-        NSURL *dst    = [[tmpURL URLByAppendingPathComponent:[[NSUUID UUID] UUIDString]] URLByAppendingPathExtension:@"pdf"];
+        NSURL *dst    = [[tmpURL URLByAppendingPathComponent:[[NSUUID UUID] UUIDString]] URLByAppendingPathExtension:@"tiff"];
         NSString *rtn = [script executeFunction:TEAppleScriptExportFunctionName
                                   withArguments:@[ dst.path ]
                                           error:nil];
@@ -247,7 +247,7 @@
         // Enumerate in reverse order
         [rep drawInRect:bounds
                fromRect:NSZeroRect
-              operation:NSCompositeSourceOver
+              operation:NSCompositingOperationSourceOver
                fraction:1.0
          respectFlipped:NO
                   hints:nil];
